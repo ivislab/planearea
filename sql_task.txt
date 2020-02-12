@@ -1,0 +1,91 @@
+-- Table: public.tag
+
+-- DROP TABLE public.tag;
+
+CREATE TABLE public.tag
+(
+    id bigint NOT NULL,
+    name character(25) COLLATE pg_catalog.default,
+    CONSTRAINT tag_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.tag
+    OWNER to postgres;
+	
+	
+	
+-- Table: public.article
+
+--DROP TABLE public.article;
+
+CREATE TABLE public.article
+(
+    id bigint NOT NULL,
+    topic text COLLATE pg_catalog.default,
+    CONSTRAINT article_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.article
+    OWNER to postgres;
+	
+
+-- Table: public.article_tag
+
+-- DROP TABLE public.article_tag;
+
+CREATE TABLE public.article_tag
+(
+    articleid bigint NOT NULL,
+    tagid bigint NOT NULL,
+    CONSTRAINT article_tag_pkey PRIMARY KEY (articleid, tagid)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.article_tag
+    OWNER to postgres;
+	
+
+
+INSERT INTO public.article(
+	id, topic)
+	VALUES (1, 'PosgreSQL'),
+	(2, 'MS SQL'),
+	(3, 'Oracle'),
+	(4, 'Javascript'),
+	(5, 'CSharp'),
+	(6, 'Cpp'),
+	(7, 'Go'),
+	(8, NULL),
+	(9, 'Java');
+	
+	
+INSERT INTO public.tag(
+	id, name)
+	VALUES (1, 'SQL'),
+	(2, 'CSharp'),
+	(3, 'NotCSharp');
+
+INSERT INTO public.article_tag(
+	articleid, tagid)
+	VALUES (1, 1), 
+	(1, 3), 
+	(3, 3),
+	(2, 1),
+	(5, 2),
+	(7, 3);
+
+
+select 
+	case 
+	when t.name is null then a.topic
+	else a.topic || ' - ' || t.name
+	end as article_name
+from public.article a
+left outer join public.article_tag at on at.articleid = a.id
+left outer join public.tag t on t.id = at.tagid
+where topic is not null
